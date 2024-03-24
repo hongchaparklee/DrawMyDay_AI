@@ -5,7 +5,10 @@ import os
 from konlpy.tag import Okt
 import re
 from krwordrank.word import KRWordRank
+from dotenv import load_dotenv
 
+load_dotenv()
+Dalle_Key = os.environ.get('MySecret')
 
 def split_noun_sentences(text):
     okt = Okt()
@@ -45,12 +48,11 @@ for word, r in sorted(keywords.items(), key=lambda x:x[1], reverse=True):
     print('%8s:\t%.4f' % (word, r))
 
 print(inputPrompt)
-print("g")
 
 # inputPrompt = "기분, 우울, 학교, 비, 우산"
 
 
-client = openai.OpenAI(api_key = "제가 준 비밀키를 복붙하세요!!")
+client = openai.OpenAI(api_key = Dalle_Key)
 
 user_info = "9 years old asian boy"
 end_of_prompt = "draw within cartoon"

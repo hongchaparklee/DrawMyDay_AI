@@ -8,6 +8,7 @@ from torchvision.datasets import ImageFolder
 from PIL import Image
 import requests
 import ssl
+
 #import torch.load with map_location=torch.device('cpu')
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -36,10 +37,11 @@ def idx_to_chr(x) :
 
 
 img = cv2.imread('./recieve/paper.png')
+print(img.shape)
 
 count = 0
-for i in range(12) :
-    for j in range(9) :
+for i in range(9) :
+    for j in range(12) :
         tmp = img[j*64+1:j*64+64,i*64+1 : i*64+64]
         cv2.imwrite(f'./recieve/words/word{count}.png',tmp)
         count+=1
@@ -67,18 +69,19 @@ for k in range(count) :
     image = trans(image)  # 이미지 변환
     
     cvimg = cv2.imread(f'./recieve/words/word{k}.png')
-    cvimg = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cvimg = cv2.cvtColor(cvimg, cv2.COLOR_BGR2GRAY)
     m = cvimg.shape[0]
     n = cvimg.shape[1]
 
-    isempty = False
+    isempty = True
     for i in range(m) :
         for j in range(n) :
-            if cvimg[i][j] <= 50 :
-                isempty = True
+            if cvimg[i][j] != 255 :
+                isempty = False
 
     if isempty :
         out = out + " "
+        continue
 
     with torch.no_grad():  # 추론 시에는 그라디언트를 계산할 필요 없음
         inputs = image.unsqueeze(0)  # 배치 차원 추가 (batch_size=1)
@@ -98,7 +101,7 @@ for k in range(count) :
 f=open('./result.txt','w')
 f.write(out)
 
-os.system("rm -rf ./recieve/words/*")
-os.system("rm -f ./recieve/paper.png")
+#os.system("rm -rf ./recieve/words/*")
+#os.system("rm -f ./recieve/paper.png")
 
 
